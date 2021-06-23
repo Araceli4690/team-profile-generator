@@ -1,104 +1,106 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-const generateMarkdown = require('./utils/generateMarkdown.js')
+//html
+const generateHTML = require('./src/generateHTML');
+//add team
 
-const introQuestions = [
+const employees = [];
+
+//employee questions
+
+const addEmployee = () => {
+    return inquirer.prompt ([
+    {
+        type: 'list',
+        name: 'role',
+        message: "Select team member's role",
+        choices: ['manager', 'engineer', 'intern']
+    },
     {
         type: 'input',
         name: 'name',
-        message: 'What is your team managers name?'
+        message: 'Enter employee name',
+// validating name input
+        validate: nameInput => {
+            if (nameInput) {
+                return true;}
+            else {
+                console.log("enter name")
+                return false
+            }
+            
+        }
     },
 
     {
         type: 'input',
-        name: 'employeeID',
-        message: "What is your team manager's employee ID?"
+        name: 'ID',
+        message: "Enter team member's ID"
     },
 
     {
         type: 'input',
-        name: 'emailAddress',
-        message: "What is your team manager's email address?"
+        name: 'email',
+        message: "Enter team member's email address"
+    },
+//more infor specific to job role
+    {
+        type: 'input',
+        name: 'moreInfo',
+        message: "Enter the manager's office number",
+        when: (input) => input.role === 'manager'
     },
 
     {
         type: 'input',
         name: 'moreInfo',
-        message: "What is your team manager's office number?"
-    }
-];
-
-// prompt with options to add team members or finish team
-const addMembers = [
-    {
-        type: 'checkbox',
-        name: 'addMember',
-        message: 'Would you like to add an engineer, intern, or finish up the team?',
-        choices: ['engineer', 'intern', 'finish team']
-    }
-];
-
-// create engineer question block
-const engineerQuestions = [
-    {
-        type: 'input',
-        name: 'name',
-        message: "What is your engineer's name?"
-    },
-
-    {
-        type: 'input',
-        name: 'employeeID',
-        message: "What is your engineer's employee ID?"
-    },
-
-    {
-        type: 'input',
-        name: 'emailAddress',
-        message: "What is your engineer's email address?"
+        message: "Enter GitHub username",
+        when: (input) => input.role === 'engineer',
     },
 
     {
         type: 'input',
         name: 'moreInfo',
-        message: "What is your engineer's GitHub username?"
+        message: "please enter the intern's school",
+        when: (input) => input.role === 'intern'
+    },
+// prompt with options to add team members;
+    {
+        tyoe: 'list',
+        name: 'moreEmployees',
+        message: 'Would you like to add more members to your team?',
+        choices: ['yes', 'no']
     }
-];
-//create intern question block 
-const internQuestions = [
-    {
-        type: 'input',
-        name: 'name',
-        message: 'What is your interns name?'
-    },
+])
+//add info to new employee
+.then(employeeInfo => {
+    let { name, id, email, moreInfo} = employeeInfo;
+    let newEmployee;
 
-    {
-        type: 'input',
-        name: 'employeeID',
-        message: "What is your intern's employee ID?"
-    },
-
-    {
-        type: 'input',
-        name: 'emailAddress',
-        message: "What is your intern's email address?"
-    },
-
-    {
-        type: 'input',
-        name: 'moreInfo',
-        message: "What school does your intern attend?"
+    if (role === 'manager') {
+        newEmployee = new manager (name,id, email, moreInfo);
+        console.log(newEmployee)
     }
-];
-//function 
-// if engineer option is selected then present with engineer question block
-    // once done return to add team memebrs menu
+    else if (role === 'engineer') {
+        newEmployee = new engineer (name, id, email, moreInfo);
+        console.log(newEmployee)
+    }
+    else {
+        newEmployee = new intern (name, id, email, moreInfo);
+        console.log(newEmployee)
+    }
+    employees.push(newEmployee);
 
-// if intern option is selected then present with intern question block
-    //once all question have been answered return to team members menu
+    if (moreEmployees === 'yes') {
+        addEmployee();
+    } else {
+        return employees;
+    }
+})
 
-// if team is finished building, exit app and generate html
+};
 
 //create function to write html 
 
 //create function to initialize app 
+

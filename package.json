@@ -1,11 +1,23 @@
 {
   "name": "team-profile-generator",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^27.0.5"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Araceli4690/team-profile-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Araceli4690/team-profile-generator/issues"
+  },
+  "homepage": "https://github.com/Araceli4690/team-profile-generator#readme",
+  "description": ""
 }
