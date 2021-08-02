@@ -1,7 +1,7 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 //html
-const generateHTML = require('./src/generateHTML');
+const generateHTML = require('./src/generateHTML.js');
 //add team
 
 const employees = [];
@@ -12,13 +12,13 @@ const addEmployee = () => {
     return inquirer.prompt ([
     {
         type: 'list',
-        name: 'role',
+        name: 'Role',
         message: "Select team member's role",
         choices: ['manager', 'engineer', 'intern']
     },
     {
         type: 'input',
-        name: 'name',
+        name: 'Name',
         message: 'Enter employee name',
 // validating name input
         validate: nameInput => {
@@ -34,16 +34,16 @@ const addEmployee = () => {
 
     {
         type: 'input',
-        name: 'ID',
+        name: 'Id',
         message: "Enter team member's ID"
     },
 
     {
         type: 'input',
-        name: 'email',
+        name: 'Email',
         message: "Enter team member's email address"
     },
-//more infor specific to job role
+//more info specific to job role
     {
         type: 'input',
         name: 'moreInfo',
@@ -66,7 +66,7 @@ const addEmployee = () => {
     },
 // prompt with options to add team members;
     {
-        tyoe: 'list',
+        type: 'list',
         name: 'moreEmployees',
         message: 'Would you like to add more members to your team?',
         choices: ['yes', 'no']
@@ -74,7 +74,7 @@ const addEmployee = () => {
 ])
 //add info to new employee
 .then(employeeInfo => {
-    let { name, id, email, moreInfo} = employeeInfo;
+    let { role, name, id, email, moreInfo} = employeeInfo;
     let newEmployee;
 
     if (role === 'manager') {
@@ -85,7 +85,7 @@ const addEmployee = () => {
         newEmployee = new engineer (name, id, email, moreInfo);
         console.log(newEmployee)
     }
-    else {
+    else if (role === 'intern') {
         newEmployee = new intern (name, id, email, moreInfo);
         console.log(newEmployee)
     }
@@ -101,6 +101,22 @@ const addEmployee = () => {
 };
 
 //create function to write html 
+const writeFile = employeeData => {
+    fs.writeFile('./src/profile.html', employeeData, err => {
+        if (err) {
+            console.log(err);
+            return;
+        } else {
+            console.log("your team profile has been generated!")
+        }
+    })
+};
 
 //create function to initialize app 
-
+addEmployee ()
+.then(employees => {
+    return generateHTML(employees);
+})
+.then(pageHTML => {
+    return writeFile(pageHTML);
+});
