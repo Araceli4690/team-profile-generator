@@ -15,13 +15,13 @@ const addEmployee = () => {
     return inquirer.prompt ([
     {
         type: 'list',
-        name: 'Role',
+        name: 'role',
         message: "Select team member's role",
         choices: ['manager', 'engineer', 'intern']
     },
     {
         type: 'input',
-        name: 'Name',
+        name: 'name',
         message: 'Enter employee name',
 // validating name input
         validate: nameInput => {
@@ -38,32 +38,32 @@ const addEmployee = () => {
     {
         type: 'input',
         name: 'Id',
-        message: "Enter team member's ID"
+        message: "Enter team member's Id"
     },
 
     {
         type: 'input',
-        name: 'Email',
+        name: 'email',
         message: "Enter team member's email address"
     },
 //more info specific to job role
     {
         type: 'input',
-        name: 'moreInfo',
+        name: 'officeNum',
         message: "Enter the manager's office number",
         when: (input) => input.role === 'manager'
     },
 
     {
         type: 'input',
-        name: 'moreInfo',
+        name: 'gitHub',
         message: "Enter GitHub username",
         when: (input) => input.role === 'engineer',
     },
 
     {
         type: 'input',
-        name: 'moreInfo',
+        name: 'school',
         message: "please enter the intern's school",
         when: (input) => input.role === 'intern'
     },
@@ -77,25 +77,25 @@ const addEmployee = () => {
 ])
 //add info to new employee
 .then(employeeInfo => {
-    let { role, name, id, email, moreInfo} = employeeInfo;
-    let newEmployee;
+    let { role, name, Id, email, officeNum, gitHub, school, moreEmployees} = employeeInfo;
+    let employee;
 
     if (role === 'manager') {
-        newEmployee = new manager (name,id, email, moreInfo);
-        console.log(newEmployee)
+        employee = new manager (name, Id, email, officeNum);
+        console.log(employee)
     }
     else if (role === 'engineer') {
-        newEmployee = new engineer (name, id, email, moreInfo);
-        console.log(newEmployee)
+        employee = new engineer (name, Id, email, gitHub);
+        console.log(employee)
     }
     else if (role === 'intern') {
-        newEmployee = new intern (name, id, email, moreInfo);
-        console.log(newEmployee)
+        employee = new intern (name, Id, email, school);
+        console.log(employee)
     }
-    employees.push(newEmployee);
+    employees.push(employee);
 
     if (moreEmployees === 'yes') {
-        addEmployee();
+        addEmployee(employees);
     } else {
         return employees;
     }
@@ -105,7 +105,7 @@ const addEmployee = () => {
 
 //create function to write html 
 const writeFile = employeeData => {
-    fs.writeFile('./src/profile.html', employeeData, err => {
+    fs.writeFile('./src/index.html', employeeData, err => {
         if (err) {
             console.log(err);
             return;
@@ -123,3 +123,6 @@ addEmployee ()
 .then(pageHTML => {
     return writeFile(pageHTML);
 });
+
+
+/// generate html
