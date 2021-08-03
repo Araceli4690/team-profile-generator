@@ -119,10 +119,11 @@ function writeHtml(){
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Team Profile Generator</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 </head>
 <body>
-    <div class="jumbotron text-center text-white bg-dark mb-3">
+    <div class="jumbotron text-center text-white bg-info mb-3">
         <h1>Team Profile</h1>
     </div>
     <div class="container">
@@ -143,15 +144,17 @@ function addHtml(){
     data = `
         <div class="col-md-6 col-lg-4">
         <div class="card">
+        <div class="card" style="width: 18rem;">
             <div class="card-header bg-light">
                 <h2>${Manager.name}</h2>
-                <h3><i class="fas fa-mug-hot"></i> Manager</h3>
+                <h3><i class="bi bi-person-fill"></i> Manager</h3>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">ID: ${Manager.id}</li>
-                <li class="list-group-item">Email: <a href="mailto:${Manager.email}">${Manager.email}</a></li>
-                <li class="list-group-item">Office Number: <a href="tel: ${Manager.officeNum}">${Manager.officeNum}</a></li>
+                <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${Manager.email}">${Manager.email}</a></li>
+                <li class="list-group-item"> <i class="bi bi-telephone-fill"></i> : <a href="tel: ${Manager.officeNum}">${Manager.officeNum}</a></li>
             </ul>
+        </div>
         </div>
         </div>
     `;
@@ -159,30 +162,34 @@ function addHtml(){
         data = `
         <div class="col-md-6 col-lg-4">
     <div class="card">
+    <div class="card" style="width: 18rem;">
         <div class="card-header bg-light">
             <h2>${Engineer.name}</h2>
-            <h3><i class="fas fa-mug-hot"></i> Engineer</h3>
+            <h4><i class="bi bi-person-fill"></i> Engineer</h4>
         </div>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">ID: ${Engineer.id}</li>
-            <li class="list-group-item">Email: <a href="mailto:${Engineer.email}">${Engineer.email}</a></li>
-            <li class="list-group-item">Office Number: <a href="tel: ${Engineer.gitHub}">${Engineer.gitHub}</a></li>
+            <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${Engineer.email}">${Engineer.email}</a></li>
+            <li class="list-group-item"><i class="bi bi-github"></i> : <a href="tel: ${Engineer.gitHub}">${Engineer.gitHub}</a></li>
         </ul>
+    </div>
     </div>
     </div>`;
     } else {
         data = `
         <div class="col-md-6 col-lg-4">
     <div class="card">
+    <div class="card" style="width: 18rem;">
         <div class="card-header bg-light">
             <h2>${Intern.name}</h2>
-            <h3><i class="fas fa-mug-hot"></i> Intern</h3>
+            <h4><i class="bi bi-person-fill"></i> Intern</h4>
         </div>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">ID: ${Intern.id}</li>
-            <li class="list-group-item">Email: <a href="mailto:${Intern.email}">${Intern.email}</a></li>
-            <li class="list-group-item">Office Number: <a href="tel: ${Intern.school}">${Intern.school}</a></li>
+            <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${Intern.email}">${Intern.email}</a></li>
+            <li class="list-group-item"><i class="bi bi-building"></i>School: <a href="tel: ${Intern.school}">${Intern.school}</a></li>
         </ul>
+    </div>
     </div>
     </div>`
     }
