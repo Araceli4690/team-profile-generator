@@ -10,107 +10,108 @@ const employees = [];
 
 
 //initialize app and html 
-function startApp(){
+function startApp() {
     writeHtml();
     addEmployee();
 }
 
 //employee questions
 const addEmployee = () => {
-    return inquirer.prompt ([
-    {
-        type: 'list',
-        name: 'role',
-        message: "Select team member's role",
-        choices: ['Manager', 'Engineer', 'Intern']
-    },
-    {
-        type: 'input',
-        name: 'name',
-        message: 'Enter employee name',
-// validating name input
-        validate: nameInput => {
-            if (nameInput) {
-                return true;}
-            else {
-                console.log("enter name")
-                return false
+    return inquirer.prompt([
+        {
+            type: 'list',
+            name: 'role',
+            message: "Select team member's role",
+            choices: ['Manager', 'Engineer', 'Intern']
+        },
+        {
+            type: 'input',
+            name: 'name',
+            message: 'Enter employee name',
+            // validating name input
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                }
+                else {
+                    console.log("enter name")
+                    return false
+                }
+
             }
-            
+        },
+
+        {
+            type: 'input',
+            name: 'Id',
+            message: "Enter team member's Id"
+        },
+
+        {
+            type: 'input',
+            name: 'email',
+            message: "Enter team member's email address"
+        },
+        //more info specific to job role
+        {
+            type: 'input',
+            name: 'officeNum',
+            message: "Enter the manager's office number",
+            when: (input) => input.role === 'Manager'
+        },
+
+        {
+            type: 'input',
+            name: 'gitHub',
+            message: "Enter GitHub username",
+            when: (input) => input.role === 'Engineer',
+        },
+
+        {
+            type: 'input',
+            name: 'school',
+            message: "please enter school name",
+            when: (input) => input.role === 'Intern'
+        },
+        // prompt with options to add team members;
+        {
+            type: 'list',
+            name: 'moreEmployees',
+            message: 'Would you like to add more members to your team?',
+            choices: ['yes', 'no']
         }
-    },
+    ])
+        //add info to new employee
+        .then(function ({ name, role, Id, email, school, officeNum, gitHub, moreEmployees }) {
 
-    {
-        type: 'input',
-        name: 'Id',
-        message: "Enter team member's Id"
-    },
+            let employee;
 
-    {
-        type: 'input',
-        name: 'email',
-        message: "Enter team member's email address"
-    },
-//more info specific to job role
-    {
-        type: 'input',
-        name: 'officeNum',
-        message: "Enter the manager's office number",
-        when: (input) => input.role === 'Manager'
-    },
+            if (role === 'Manager') {
+                employee = new Manager(name, Id, email, officeNum);
+            }
+            else if (role === 'Engineer') {
+                employee = new Engineer(name, Id, email, gitHub);
+            }
+            else {
+                employee = new Intern(name, Id, email, school);
+            }
+            employees.push(employee);
 
-    {
-        type: 'input',
-        name: 'gitHub',
-        message: "Enter GitHub username",
-        when: (input) => input.role === 'Engineer',
-    },
+            addHtml(employee)
 
-    {
-        type: 'input',
-        name: 'school',
-        message: "please enter school name",
-        when: (input) => input.role === 'Intern'
-    },
-// prompt with options to add team members;
-    {
-        type: 'list',
-        name: 'moreEmployees',
-        message: 'Would you like to add more members to your team?',
-        choices: ['yes', 'no']
-    }
-])
-//add info to new employee
-.then(function({name, role, Id, email, school, officeNum, gitHub, moreEmployees}){
-   
-    let employee;
-
-    if (role === 'Manager') {
-        employee = new Manager (name, Id, email, officeNum);
-    }
-    else if (role === 'Engineer') {
-        employee = new Engineer (name, Id, email, gitHub);
-    }
-    else {
-        employee = new Intern (name, Id, email, school);
-    }
-    employees.push(employee);
-
-    addHtml(employee)
-        
-    if (moreEmployees === "yes") {
-            addEmployee();
-        } else {
-            generatedHtml();
-        }
-});
+            if (moreEmployees === "yes") {
+                addEmployee();
+            } else {
+                generatedHtml();
+            }
+        });
 
 };
 
 
 /// generate html
 
-function writeHtml(){
+function writeHtml() {
     const html = `
     <!DOCTYPE html>
 <html lang="en">
@@ -135,13 +136,13 @@ function writeHtml(){
     })
 }
 //create function to write html 
-function addHtml(){
+function addHtml() {
     let data = '';
     const employee = data;
     const role = employee.getRole;
 
-   if(role ==='Manager'){
-    data = `
+    if (role === 'Manager') {
+        data = `
         <div class="col-md-6 col-lg-4">
         <div class="card">
         <div class="card" style="width: 18rem;">
@@ -158,7 +159,7 @@ function addHtml(){
         </div>
         </div>
     `;
-    } else if(role === 'Engineer'){
+    } else if (role === 'Engineer') {
         data = `
         <div class="col-md-6 col-lg-4">
     <div class="card">
@@ -194,8 +195,8 @@ function addHtml(){
     </div>`
     }
     console.log('adding employees to page');
-    fs.appendFile("./src/index.html", data, function(err){
-        if (err){
+    fs.appendFile("./src/index.html", data, function (err) {
+        if (err) {
             return err;
         };
     })
@@ -208,8 +209,8 @@ function generatedHtml() {
     
 </body>
 </html>`;
-    fs.appendFile("./src/index.html", html, function(err){
-        if(err) {
+    fs.appendFile("./src/index.html", html, function (err) {
+        if (err) {
             console.log(err);
         }
     })
