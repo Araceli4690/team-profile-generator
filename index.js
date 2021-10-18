@@ -43,7 +43,7 @@ const addEmployee = () => {
 
         {
             type: 'input',
-            name: 'Id',
+            name: 'id',
             message: "Enter team member's Id"
         },
 
@@ -51,62 +51,54 @@ const addEmployee = () => {
             type: 'input',
             name: 'email',
             message: "Enter team member's email address"
-        },
-        //more info specific to job role
-        {
-            type: 'input',
-            name: 'officeNum',
-            message: "Enter the manager's office number",
-            when: (input) => input.role === 'Manager'
-        },
-
-        {
-            type: 'input',
-            name: 'gitHub',
-            message: "Enter GitHub username",
-            when: (input) => input.role === 'Engineer',
-        },
-
-        {
-            type: 'input',
-            name: 'school',
-            message: "please enter school name",
-            when: (input) => input.role === 'Intern'
-        },
-        // prompt with options to add team members;
-        {
-            type: 'list',
-            name: 'moreEmployees',
-            message: 'Would you like to add more members to your team?',
-            choices: ['yes', 'no']
         }
     ])
-        //add info to new employee
-        .then(function ({ name, role, Id, email, school, officeNum, gitHub, moreEmployees }) {
-
-            let employee;
-
-            if (role === 'Manager') {
-                employee = new Manager(name, Id, email, officeNum);
-            }
-            else if (role === 'Engineer') {
-                employee = new Engineer(name, Id, email, gitHub);
-            }
-            else {
-                employee = new Intern(name, Id, email, school);
-            }
-            employees.push(employee);
-
-            addHtml(employee)
-
-            if (moreEmployees === "yes") {
-                addEmployee();
+        //more info specific to job role
+        .then(function ({ name, role, id, email }) {
+            let roleInfo = "";
+            if (role === "Engineer") {
+                roleInfo = "GitHub username";
+            } else if (role === "Intern") {
+                roleInfo = "school name";
             } else {
-                generatedHtml();
+                roleInfo = "office phone number";
             }
-        });
+            inquirer.prompt([{
+                message: `Enter team member's ${roleInfo}`,
+                name: "roleInfo"
+            },
+            {
+                type: "list",
+                message: "Would you like to add more team members?",
+                choices: [
+                    "yes",
+                    "no"
+                ],
+                name: "moreEmployees"
+            }])
+                .then(function ({ roleInfo, moreEmployees }) {
+                    let newEmployee;
+                    if (role === "Engineer") {
+                        newEmployee = new Engineer(name, id, email, roleInfo);
+                    } else if (role === "Intern") {
+                        newEmployee = new Intern(name, id, email, roleInfo);
+                    } else {
+                        newEmployee = new Manager(name, id, email, roleInfo);
+                    }
+                    employees.push(newEmployee);
+                    addHtml(newEmployee)
+                        .then(function () {
+                            if (moreEmployees === "yes") {
+                                addEmployee();
+                            } else {
+                                generatedHtml();
+                            }
+                        });
 
-};
+                });
+        });
+}
+
 
 
 /// generate html
@@ -136,69 +128,77 @@ function writeHtml() {
     })
 }
 //create function to write html 
-function addHtml() {
-    let data = '';
-    const employee = data;
-    const role = employee.getRole;
+function addHtml(member) {
+    return new Promise(function (resolve, reject) {
+        const name = member.getName();
+        const role = member.getRole();
+        const id = member.getId();
+        const email = member.getEmail();
 
-    if (role === 'Manager') {
-        data = `
+        let data = '';
+        if (role === 'Manager') {
+            const officeNum = member.getOfficeNumber();
+            data = `
         <div class="col-md-6 col-lg-4">
         <div class="card">
         <div class="card" style="width: 18rem;">
             <div class="card-header bg-light">
-                <h2>${Manager.name}</h2>
+                <h2>${name}</h2>
                 <h3><i class="bi bi-person-fill"></i> Manager</h3>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">ID: ${Manager.id}</li>
-                <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${Manager.email}">${Manager.email}</a></li>
-                <li class="list-group-item"> <i class="bi bi-telephone-fill"></i> : <a href="tel: ${Manager.officeNum}">${Manager.officeNum}</a></li>
+                <li class="list-group-item">ID: ${id}</li>
+                <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${email}">${email}</a></li>
+                <li class="list-group-item"> <i class="bi bi-telephone-fill"></i> : <a href="tel: ${officeNum}">${officeNum}</a></li>
             </ul>
         </div>
         </div>
         </div>
     `;
-    } else if (role === 'Engineer') {
-        data = `
+        } else if (role === 'Engineer') {
+            const gitHub = member.getGithub();
+            data = `
         <div class="col-md-6 col-lg-4">
     <div class="card">
     <div class="card" style="width: 18rem;">
         <div class="card-header bg-light">
-            <h2>${Engineer.name}</h2>
+            <h2>${name}</h2>
             <h4><i class="bi bi-person-fill"></i> Engineer</h4>
         </div>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">ID: ${Engineer.id}</li>
-            <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${Engineer.email}">${Engineer.email}</a></li>
-            <li class="list-group-item"><i class="bi bi-github"></i> : <a href="tel: ${Engineer.gitHub}">${Engineer.gitHub}</a></li>
+            <li class="list-group-item">ID: ${id}</li>
+            <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${email}">${email}</a></li>
+            <li class="list-group-item"><i class="bi bi-github"></i> : <a href="tel: ${gitHub}">${gitHub}</a></li>
         </ul>
     </div>
     </div>
     </div>`;
-    } else {
-        data = `
+        } else {
+            const school = member.getSchool();
+            data = `
         <div class="col-md-6 col-lg-4">
     <div class="card">
     <div class="card" style="width: 18rem;">
         <div class="card-header bg-light">
-            <h2>${Intern.name}</h2>
+            <h2>${name}</h2>
             <h4><i class="bi bi-person-fill"></i> Intern</h4>
         </div>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">ID: ${Intern.id}</li>
-            <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${Intern.email}">${Intern.email}</a></li>
-            <li class="list-group-item"><i class="bi bi-building"></i>School: <a href="tel: ${Intern.school}">${Intern.school}</a></li>
+            <li class="list-group-item">ID: ${id}</li>
+            <li class="list-group-item"> <i class="bi bi-envelope-fill"></i> : <a href="mailto:${email}">${email}</a></li>
+            <li class="list-group-item"><i class="bi bi-building"></i>School: <a href="tel: ${school}">${school}</a></li>
         </ul>
     </div>
     </div>
     </div>`
-    }
-    console.log('adding employees to page');
-    fs.appendFile("./src/index.html", data, function (err) {
-        if (err) {
-            return err;
-        };
+        }
+        console.log('adding employees to page');
+        fs.appendFile("./src/index.html", data, function (err) {
+            if (err) {
+                return err;
+            };
+            return resolve();
+        })
     })
 }
 
